@@ -18,3 +18,6 @@ m32:
 # BTW, for m32:
 #   sudo apt-get install gcc-multilib 
 #   sudo apt-get install g++-multilib 
+
+clean:
+	rm -f a.out __fir.cc _fir.cc z.cc colons.tmp decls.h defs.h words.tmp
