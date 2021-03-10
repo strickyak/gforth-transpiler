@@ -1,3 +1,14 @@
+# This program compiles the definitions in "prims.txt".
+# to produce four intermediate files:
+#
+#   _decls.h    -- declarations of C++ stuff.
+#   _defs.h     -- inline definitions of c++ stuff.
+#   _words.tmp  -- a list of words defined in prims.txt, one per line.
+#   _colons.tmp -- colon definitions from prims.txt.
+#
+# The first two will be included by the C++ compiler.
+# The latter two will be read by pile.py.
+
 import sys
 
 def Esc(s):
@@ -10,10 +21,10 @@ def Esc(s):
             z += '_%d_' % ord(ch)
     return z
 
-Decls = open('decls.h', 'w')
-Defs = open('defs.h', 'w')
-Words = open('words.tmp', 'w')
-Colons = open('colons.tmp', 'w')
+Decls = open('_decls.h', 'w')
+Defs = open('_defs.h', 'w')
+Words = open('_words.tmp', 'w')
+Colons = open('_colons.tmp', 'w')
 fd = Defs
 
 ender = ''

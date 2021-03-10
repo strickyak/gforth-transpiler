@@ -1,3 +1,23 @@
+# Builtin FORTH word definitions (except for defining words
+# and string literals handled in pile.py).
+#
+# Clauses start when one of the following words in in column 1.
+# The body of each clause must be indented, with space in column 1.
+#
+# def -- raw C++; must manipulate stacks manually.
+# : -- defined in terms of forth words.
+#
+# Special forms that manipulate the stack for you:
+#
+# un -- unary function computes word z given word a.
+# bin -- binary function computes word z given word a & word b.
+# fun -- binary function computes double z given double a & double b
+#          ( that is, C double float;  not forth "d" double int ).
+# fbin -- binary function computes double z given double a & double b.
+# fbinw -- binary function computes word z given double a & double b.
+#
+# See vm.h for more about stacks.
+#
 def utime
   int gettimeofday(struct timeval *tv, struct timezone *tz);
   struct timeval tv;

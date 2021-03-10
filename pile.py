@@ -2,7 +2,7 @@ import re, sys
 
 WHITE = set([' ', '\t', '\n', '\r'])
 
-DEFINED_WORDS = set([w.rstrip() for w in open('words.tmp')])
+DEFINED_WORDS = set([w.rstrip() for w in open('_words.tmp')])
 
 IS_INT = re.compile('^([-]?(0x)?[0-9]+)$').match
 IS_HEX = re.compile('^([$][0-9a-fA-F]+)$').match
@@ -273,7 +273,7 @@ ONE = '''
 '''
 
 parser = Parser()
-parser.Parse(open('colons.tmp').read())
+parser.Parse(open('_colons.tmp').read())
 parser.Parse(ONE)
 for filename in sys.argv[1:]:
     parser.Parse(open(filename).read())
@@ -282,11 +282,11 @@ print '''
 #include "vm.h"
 // DECLARATIONS
 %s
-#include "defs.h"
+#include "_defs.h"
 
 // DEFINITIONS
 %s
-#include "decls.h"
+#include "_decls.h"
 
 // INITIALIZATIONS
 void Initialize() {
