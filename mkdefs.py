@@ -104,4 +104,4 @@ print >>Defs, ender
 Decls.close()
 Defs.close()
 Words.close()
-Words.close()
+Colons.close()
