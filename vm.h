@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <cassert>
+#include <cerrno>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>

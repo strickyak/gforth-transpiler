@@ -10,7 +10,9 @@ all:
 	# The following is hardwired for "fir.4th".  Change to your source filename.
 	python2 pile.py fir.4th > __fir.tmp
 	# If clang-format is not available, just cat it.
-	clang-format --style=WebKit __fir.tmp > _fir.cc || cat __fir.tmp > _fir.cc
+	# On my Pi 3B+ "Raspbian GNU/Linux 8 (jessie)", I did `apt-get install clang-format-3.9`.
+	# Using --style=WebKit allows long lines, which our machine-generated code enjoys.
+	clang-format --style=WebKit __fir.tmp > _fir.cc || /usr/bin/clang-format-3.? --style=WebKit __fir.tmp > _fir.cc || cat __fir.tmp > _fir.cc
 	g++ -std=c++11 $M -g _fir.cc -lm
 	# How long should this data file be?
 	dd if=/dev/urandom of=/tmp/0064foo.dat bs=1k count=4096
