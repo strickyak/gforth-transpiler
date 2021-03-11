@@ -1,0 +1,25 @@
+168c168,169
+< 2variable coeffs-fixed-point-array
+---
+> 2variable ALIGN-101
+> create coeffs-fixed-point-array
+218c219,220
+< fvariable coeff-floats-array coeff-floats-array-len allot
+---
+> fvariable ALIGN-102
+> create coeff-floats-array coeff-floats-array-len allot
+296,297c298,303
+< variable S16signal-buffer  S16signal-buffer-len allot \ 02-25'21
+< fvariable signal-buffer  signal-buffer-len allot  \ 02-25'21
+---
+> variable ALIGN-103
+> create S16signal-buffer 
+>     S16signal-buffer-len allot \ 02-25'21
+> fvariable ALIGN-104
+> create signal-buffer 
+>     signal-buffer-len allot  \ 02-25'21
+319c325,326
+< fvariable  filtered-buffer  filtered-buffer-len allot
+---
+> fvariable  ALIGN-105
+> create  filtered-buffer  filtered-buffer-len allot
