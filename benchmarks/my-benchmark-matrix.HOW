@@ -1,0 +1,59 @@
+My first speed results, not under strictly-controlled conditions, on a fast 64-bit Intel (x86_64) Linux laptop:
+
+transpiler     -O3     96.319s
+gforth-fast            18.105s
+hand-written-C (no -O)  4.162s
+hand-written-C  -O1     1.343s
+hand-written-C  -O2     1.013s
+hand-written-C  -O3     0.527s
+
+Below you see we get the same answer for side_effect, which should
+check that they are doing the same work.
+(I've also manually checked that the output of the first round is the
+same, and that after the inner loop of 100 iterations, it's the same.)
+Basically it's running 100,000,000 matrix multiplies,  vector :=
+matrix * vector,   where matrix is 4x4 and vector is length 4,
+standard IEEE 64-bit floating point numbers.
+
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler$ python2 pile.py benchmarks/my-forth-matrix.4th > __m.tmp && clang-format --style=WebKit __m.tmp > _m.cc && g++ -std=c++11 -O3 _m.cc && time ./a.out
+side_effect=16778890.1295335 
+
+real	1m36.319s
+user	1m36.316s
+sys	0m0.000s
+
+
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler/benchmarks$ time gforth-fast my-forth-matrix.4th  
+side_effect=16778890.1295335 
+
+real	0m18.105s
+user	0m18.077s
+sys	0m0.041s
+
+
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler/benchmarks$ g++ -D"BENCH"  -std=c++11 my-c-matrix.cc && time ./a.out 
+side_effect=1.67789e+07
+
+real	0m4.162s
+user	0m4.161s
+sys	0m0.001s
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler/benchmarks$ g++ -D"BENCH"  -std=c++11 -O1 my-c-matrix.cc && time ./a.out 
+side_effect=1.67789e+07
+
+real	0m1.343s
+user	0m1.342s
+sys	0m0.001s
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler/benchmarks$ g++ -D"BENCH"  -std=c++11 -O2 my-c-matrix.cc && time ./a.out 
+side_effect=1.67789e+07
+
+real	0m1.013s
+user	0m1.013s
+sys	0m0.000s
+strick@strick:~/go/src/github.com/strickyak/gforth-transpiler/benchmarks$ g++ -D"BENCH"  -std=c++11 -O3 my-c-matrix.cc && time ./a.out 
+side_effect=1.67789e+07
+
+real	0m0.527s
+user	0m0.522s
+sys	0m0.005s
+
+

@@ -105,10 +105,10 @@ class Parser(object):
         while True:
             w = self.lexer.getWord()
             if not w: break
-            self.main += '''\nfprintf(stderr, "{{{ main calling: `%s`\\n");\n''' % CEscape(w)
+            self.main += '''\nSAY(stderr, "{{{ main calling: `%s`\\n");\n''' % CEscape(w)
             handling = self.HandleWord(w)
             if handling: self.main += handling + ('// <<< %s >>>\n' % w)
-            self.main += '''\nfprintf(stderr, "     main called: `%s` }}}\\n");\n''' % CEscape(w)
+            self.main += '''\nSAY(stderr, "     main called: `%s` }}}\\n");\n''' % CEscape(w)
             self.main += '''\nShowStacks();\n'''
 
     def HandleWord(self, w):
@@ -151,10 +151,10 @@ class Parser(object):
             }
             ''' % (nom, name, nom)
             return '''
-               fprintf(stderr, "=== pre-create here=%%ld\\n", here);
+               SAY(stderr, "=== pre-create here=%%ld\\n", here);
                here = (~7L)&(here+7);
                V_%s = here; 
-               fprintf(stderr, "=== create `%%s` %%ld\\n", "%s", here);
+               SAY(stderr, "=== create `%%s` %%ld\\n", "%s", here);
             ''' % (nom, CEscape(name)) 
 
         elif w == 'constant':
@@ -173,7 +173,7 @@ class Parser(object):
             self.decls += '''void F_%s(); // %s\n''' % (nom, name)
             self.defs += '''void F_%s() { // %s
                 ds[++dp] = (word)(&V_%s);
-               fprintf(stderr, "=== get variable `%%s` %%ld\\n", "%s", ds[dp]);
+               SAY(stderr, "=== get variable `%%s` %%ld\\n", "%s", ds[dp]);
             }
             ''' % (nom, name, nom, name)
 
@@ -183,7 +183,7 @@ class Parser(object):
             self.decls += '''void F_%s(); // %s\n''' % (nom, name)
             self.defs += '''void F_%s() { // %s
                 ds[++dp] = (word)(&V_%s);
-               fprintf(stderr, "=== get fvariable `%%s` %%ld\\n", "%s", ds[dp]);
+               SAY(stderr, "=== get fvariable `%%s` %%ld\\n", "%s", ds[dp]);
             }
             ''' % (nom, name, nom, name)
 
@@ -193,7 +193,7 @@ class Parser(object):
             self.decls += '''void F_%s(); // %s\n''' % (nom, name)
             self.defs += '''void F_%s() { // %s
                 ds[++dp] = (word)(&V_%s);
-               fprintf(stderr, "=== get 2variable `%%s` %%ld\\n", "%s", ds[dp]);
+               SAY(stderr, "=== get 2variable `%%s` %%ld\\n", "%s", ds[dp]);
             }
             ''' % (nom, name, nom, name)
 
@@ -203,12 +203,12 @@ class Parser(object):
             self.decls += '''void F_%s(); // %s\n''' % (nom, name)
             self.defs += '''void F_%s() { // %s
                 ds[++dp] = V_%s;
-               fprintf(stderr, "=== get value `%%s` %%ld\\n", "%s", ds[dp]);
+               SAY(stderr, "=== get value `%%s` %%ld\\n", "%s", ds[dp]);
             }
             ''' % (nom, name, nom, name)
             return '''
               V_%s = ds[dp--]; // to %s
-              fprintf(stderr, "=== init value `%%s` to %%ld\\n", "%s", V_%s);
+              SAY(stderr, "=== init value `%%s` to %%ld\\n", "%s", V_%s);
             ''' % (nom, name, name, nom)
 
         elif w == 'to':
@@ -249,14 +249,14 @@ class Parser(object):
     def Colon(self):
         name, nom = self.lexer.getWordToDefine()
         body = ''
-        self.main += '''\nfprintf(stderr, "... compiling `%s`\\n");\n''' % name
+        self.main += '''\nSAY(stderr, "... compiling `%s`\\n");\n''' % name
         w = self.lexer.mustGetWord()
         while w != ';':
             body += 'assert(here > 1024);'
-            body += '''\nfprintf(stderr, "{{{ calling: `%s`\\n");\n''' % CEscape(w)
+            body += '''\nSAY(stderr, "{{{ calling: `%s`\\n");\n''' % CEscape(w)
             handling = self.HandleWord(w)
             if handling: body += handling + ('// <<< %s >>>\n' % w)
-            body += '''\nfprintf(stderr, "     called: `%s` }}}\\n");\n''' % CEscape(w)
+            body += '''\nSAY(stderr, "     called: `%s` }}}\\n");\n''' % CEscape(w)
             body += '''\nShowStacks();\n'''
             w = self.lexer.mustGetWord()
 
@@ -267,14 +267,8 @@ class Parser(object):
         }
         ''' % (nom, name, body)
 
-ONE = '''
-    \ comment ." 123"
-    ." Hello World!" cr ( comment )
-'''
-
 parser = Parser()
 parser.Parse(open('_colons.tmp').read())
-parser.Parse(ONE)
 for filename in sys.argv[1:]:
     parser.Parse(open(filename).read())
 

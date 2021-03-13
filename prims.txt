@@ -107,6 +107,8 @@ def count
   push((word)addr+1);
   push(len);
   
+def bye
+  exit(0);
 def quit
   exit(0);
 def 2drop
@@ -187,7 +189,7 @@ def open-file
   memcpy(fname, a, n);
 
   FILE* fd = fopen(fname, "r");
-  fprintf(stderr, "=== open-file: `%s` => %ld, %d\n", fname, (word)fd, errno);
+  SAY(stderr, "=== open-file: `%s` => %ld, %d\n", fname, (word)fd, errno);
   free(fname);
   if (fd) { // good
     push((word)fd);
@@ -207,7 +209,7 @@ def open-pipe
   memcpy(fname, a, n);
 
   FILE* fd = popen(fname, "r");
-  fprintf(stderr, "=== open-pipe: `%s` => %ld, %d\n", fname, (word)fd, errno);
+  SAY(stderr, "=== open-pipe: `%s` => %ld, %d\n", fname, (word)fd, errno);
   free(fname);
   if (fd) { // good
     push((word)fd);
@@ -226,7 +228,7 @@ def create-file
   memcpy(fname, a, n);
 
   FILE* fd = fopen(fname, "w");
-  fprintf(stderr, "=== create-file: `%s` => %ld, %d\n", fname, (word)fd, errno);
+  SAY(stderr, "=== create-file: `%s` => %ld, %d\n", fname, (word)fd, errno);
   free(fname);
   if (fd) { // good
     push((word)fd);
@@ -243,8 +245,8 @@ def delete-file
   memset(fname, 0, n+1);
   memcpy(fname, a, n);
 
-  fprintf(stderr, "=== delete-file: `%s`\n", fname);
-  fprintf(stderr, "\nSHOULD DELETE FILE: %s\n", fname);
+  SAY(stderr, "=== delete-file: `%s`\n", fname);
+  SAY(stderr, "\nSHOULD DELETE FILE: %s\n", fname);
   free(fname);
 
 def read-file
@@ -296,14 +298,18 @@ def r/w
 def erase
   word n = pop();
   char* p = (char*) pop();
-  fprintf(stderr, "=== erase: %ld bytes at %ld\n", n, (word)p);
+  SAY(stderr, "=== erase: %ld bytes at %ld\n", n, (word)p);
   memset(p, 0, (size_t)n);
+def falign
+  here = ~(word)(7) & (here + 7);
+#un fcells
+#  z = 8 * a;
 def allot
-  fprintf(stderr, "=== pre-allot: here = %ld\n", here);
+  SAY(stderr, "=== pre-allot: here = %ld\n", here);
   word len = pop();
   word z = here;
   here += len;
-  fprintf(stderr, "=== post-allot: here = %ld\n", here);
+  SAY(stderr, "=== post-allot: here = %ld\n", here);
 def i
   ds[++dp] = rs[rp];
 def j
@@ -311,26 +317,26 @@ def j
 def must
   if (0 == ds[dp--]) {
     fflush(stdout);
-    fprintf(stderr, "\n****** FAILURE IN must ******\n");
+    SAY(stderr, "\n****** FAILURE IN must ******\n");
     fflush(stderr);
     abort();
   }
 def ~
   if (dp) {
     fflush(stdout);
-    fprintf(stderr, "\ndp is %ld want 0\n", dp);
+    SAY(stderr, "\ndp is %ld want 0\n", dp);
     fflush(stderr);
     abort();
   }
   if (rp) {
     fflush(stdout);
-    fprintf(stderr, "\ndp is %ld want 0\n", rp);
+    SAY(stderr, "\ndp is %ld want 0\n", rp);
     fflush(stderr);
     abort();
   }
   if (fp) {
     fflush(stdout);
-    fprintf(stderr, "\ndp is %ld want 0\n", fp);
+    SAY(stderr, "\ndp is %ld want 0\n", fp);
     fflush(stderr);
     abort();
   }
@@ -338,14 +344,29 @@ def .
   printf("%ld ", ds[dp--]);
     fflush(stdout);
 def f.
-  printf("%.10g ", fs[fp--]);
+  printf("%.15g ", fs[fp--]);
     fflush(stdout);
 def cr
   printf("\n");
     fflush(stdout);
 def dup
-  ds[dp+1] = ds[dp];
-  dp++;
+  ds[++dp] = ds[dp];
+def over
+  ds[++dp] = ds[dp-1];
+def swap
+  word tmp = ds[dp];
+  ds[dp] = ds[dp-1];
+  ds[dp-1] = tmp;
+def rot
+  word tmp = ds[dp-2];
+  ds[dp-2] = ds[dp-1];
+  ds[dp-1] = ds[dp];
+  ds[dp] = tmp;
+def -rot
+  word tmp = ds[dp];
+  ds[dp] = ds[dp-1];
+  ds[dp-1] = ds[dp-2];
+  ds[dp-2] = tmp;
 def !
   word* p = (word*)ds[dp--];
   *p = ds[dp--];
@@ -356,8 +377,8 @@ def f!
   double* p = (double*)ds[dp--];
   *p = fs[fp--];
 def f@
-  double* p = (double*)ds[dp];
-  fs[fp] = *p;
+  double* p = (double*)pop();
+  fpush(*p);
 def d>f
   word b = pop();
   word a = pop();

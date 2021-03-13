@@ -13,6 +13,12 @@
 #include <cstring>
 #include <ctgmath>
 
+#ifdef DEBUG
+#define SAY fprintf
+#else
+#define SAY if(0)fprintf
+#endif
+
 using word = long;
 using uword = unsigned long;
 constexpr int HEAP_SIZE = 100 * 1000 * 1000;  // 100M
@@ -54,25 +60,25 @@ long long PairToLongLong(word hi, word lo) {
 }
 
 void VMInitialize() {
-  fprintf(stderr, "sizeof (int) = %d\n", sizeof(int));
-  fprintf(stderr, "sizeof (word) = %d\n", sizeof(word));
-  fprintf(stderr, "sizeof (uword) = %d\n", sizeof(uword));
-  fprintf(stderr, "sizeof (long) = %d\n", sizeof(long));
-  fprintf(stderr, "sizeof (char*) = %d\n", sizeof(char*));
-  fprintf(stderr, "sizeof (word*) = %d\n", sizeof(word*));
+  SAY(stderr, "sizeof (int) = %d\n", sizeof(int));
+  SAY(stderr, "sizeof (word) = %d\n", sizeof(word));
+  SAY(stderr, "sizeof (uword) = %d\n", sizeof(uword));
+  SAY(stderr, "sizeof (long) = %d\n", sizeof(long));
+  SAY(stderr, "sizeof (char*) = %d\n", sizeof(char*));
+  SAY(stderr, "sizeof (word*) = %d\n", sizeof(word*));
 
   here = (word)(&heap[0]);
-  fprintf(stderr, "=== here = %ld\n", here);
+  SAY(stderr, "=== here = %ld\n", here);
 }
 
 void ShowStacks() {
-  fprintf(stderr, "\t\t\t[[[ ");
-  for (word i=1; i<=dp; i++) fprintf(stderr, "%ld ", ds[i]);
-  fprintf(stderr, ";;; ");
-  for (word i=1; i<=rp; i++) fprintf(stderr, "0x%lx ", rs[i]);
-  fprintf(stderr, ";;; ");
-  for (word i=1; i<=fp; i++) fprintf(stderr, "%.12g ", fs[i]);
-  fprintf(stderr, "]]] ...... %d %d %d\n", dp, rp, fp);
+  SAY(stderr, "\t\t\t[[[ ");
+  for (word i=1; i<=dp; i++) SAY(stderr, "%ld ", ds[i]);
+  SAY(stderr, ";;; ");
+  for (word i=1; i<=rp; i++) SAY(stderr, "0x%lx ", rs[i]);
+  SAY(stderr, ";;; ");
+  for (word i=1; i<=fp; i++) SAY(stderr, "%.12g ", fs[i]);
+  SAY(stderr, "]]] ...... %d %d %d\n", dp, rp, fp);
   assert(dp >= 0);
   assert(rp >= 0);
   assert(fp >= 0);
