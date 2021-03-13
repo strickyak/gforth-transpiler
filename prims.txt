@@ -350,9 +350,11 @@ def cr
   printf("\n");
     fflush(stdout);
 def dup
-  ds[++dp] = ds[dp];
+  dp++;
+  ds[dp] = ds[dp-1];
 def over
-  ds[++dp] = ds[dp-1];
+  dp++;
+  ds[dp] = ds[dp-2];
 def swap
   word tmp = ds[dp];
   ds[dp] = ds[dp-1];
