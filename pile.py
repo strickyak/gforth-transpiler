@@ -252,7 +252,6 @@ class Parser(object):
         self.main += '''\nSAY(stderr, "... compiling `%s`\\n");\n''' % name
         w = self.lexer.mustGetWord()
         while w != ';':
-            body += 'assert(here > 1024);'
             body += '''\nSAY(stderr, "{{{ calling: `%s`\\n");\n''' % CEscape(w)
             handling = self.HandleWord(w)
             if handling: body += handling + ('// <<< %s >>>\n' % w)
@@ -260,7 +259,6 @@ class Parser(object):
             body += '''\nShowStacks();\n'''
             w = self.lexer.mustGetWord()
 
-        body += 'assert(here > 1024);'
         self.decls += '''void F_%s(); // %s''' % (nom, name)
         self.defs += '''inline void F_%s() { // %s
 %s
