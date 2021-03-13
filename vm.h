@@ -72,6 +72,7 @@ void VMInitialize() {
 }
 
 void ShowStacks() {
+#ifdef DEBUG
   SAY(stderr, "\t\t\t[[[ ");
   for (word i=1; i<=dp; i++) SAY(stderr, "%ld ", ds[i]);
   SAY(stderr, ";;; ");
@@ -85,4 +86,5 @@ void ShowStacks() {
   assert(dp < 100);
   assert(rp < 100);
   assert(fp < 100);
+#endif
 }
