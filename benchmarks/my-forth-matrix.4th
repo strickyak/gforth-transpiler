@@ -1,3 +1,4 @@
+1000000 constant #RUNS
 1 constant BENCH
 4 constant VLEN
 VLEN dup * constant MLEN
@@ -127,7 +128,7 @@ create transform MLEN fcells allot
 
 : main
   0 s>f side_effect f!
-  1000000 0 DO
+  #RUNS 0 DO
     run-once
     vec1 vector_sum   side_effect f@ f+ side_effect f!    
   LOOP
