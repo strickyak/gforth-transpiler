@@ -221,17 +221,31 @@ class Parser(object):
         elif w == ":":
             return self.Colon()
 
-        elif w == "do": return '''
+        elif w == "xxx do": return '''
               rp += 2;
               rs[rp] = ds[dp--];  // i
               rs[rp-1] = ds[dp--];  // limit
               while (rs[rp] < rs[rp-1]) {
             '''
-        elif w == "loop": return '''
+        elif w == "xxx loop": return '''
                 rs[rp]++;
               }
               rp-=2;
             '''
+
+        elif w == "do": return '''
+            {
+              int j = i;
+              int start = ds[dp--];
+              int limit = ds[dp--];
+              for (int i=start; i < limit; i++) {
+            '''
+        elif w == "loop": return '''
+              }
+            }
+            '''
+        elif w == "i": return ' ds[++dp] = i; '
+        elif w == "j": return ' ds[++dp] = j; '
 
         elif w == "if": return '''
                 {if (ds[dp--]) {
@@ -261,6 +275,7 @@ class Parser(object):
 
         self.decls += '''void F_%s(); // %s''' % (nom, name)
         self.defs += '''inline void F_%s() { // %s
+int i=0, j=0;
 %s
         }
         ''' % (nom, name, body)
@@ -289,6 +304,7 @@ void Initialize() {
 int main(int argc, const char* argv[]) {
   VMInitialize();
   Initialize();
+  int i=0, j=0;
 %s
 }
 // END

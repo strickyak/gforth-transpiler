@@ -310,10 +310,10 @@ def allot
   word z = here;
   here += len;
   SAY(stderr, "=== post-allot: here = %ld\n", here);
-def i
-  ds[++dp] = rs[rp];
-def j
-  ds[++dp] = rs[rp-2];
+#def i
+#  ds[++dp] = rs[rp];
+#def j
+#  ds[++dp] = rs[rp-2];
 def must
   if (0 == ds[dp--]) {
     fflush(stdout);
