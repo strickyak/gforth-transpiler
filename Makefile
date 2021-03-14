@@ -5,6 +5,7 @@
 #   ./my-stuff
 
 CXXFLAGS=-Ofast -funroll-loops -std=c++11
+LDLIBS= -lm
 
 %.cc : %.4th pile.py
 	python2 pile.py $< > $@
