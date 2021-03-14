@@ -3,7 +3,7 @@ M=
 CFLAGS= -funroll-loops -Ofast
 
 all:
-	python2 pile.py test*.4th > _test.cc && cat -n _test.cc && g++ -std=c++11 $M ${CFLAGS} _test.cc && ./a.out
+	python2 pile.py test*.4th > _test.cc && g++ -std=c++11 $M ${CFLAGS} _test.cc && ./a.out
 	: ===========================
 	# If passes tests above, check in to RCS, if you have a "ci-l" command.
 	test -x /usr/local/bin/ci-l && ci-l `find * -prune -type f -print | grep -v a.out` || echo 'Skipping ci-l'
