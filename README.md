@@ -16,6 +16,11 @@ Type `make program.cc` to compile into intermediate `program.cc`.
 Then you can use any C++ compiler with any options you want.  You can use `-g`
 and a debugger.
 
+To run the transpiler without using `make`, it's this simple:
+```
+$ python2 pile.py program.4th > program.cc
+```
+
 ## Internals
 
 Everything needed to build the C++ program is in one file: `pile.py`
