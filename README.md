@@ -9,6 +9,7 @@ Create your FORTH file `program.4th`
 
 Run `make program` to compile and build a binary named `program`.
 Run `make CXXFLAGS="..." program` to add any compiler flags.
+Notice you might need `-std=c++11` in CXXFLAGS.
 You can also add `CXX=clang` to use clang instead of g++.
 
 Type `make program.cc` to compile into intermediate `program.cc`.

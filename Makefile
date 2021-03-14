@@ -4,7 +4,7 @@
 # and run it like this
 #   ./my-stuff
 
-CXXFLAGS=-Ofast -funroll-loops 
+CXXFLAGS=-Ofast -funroll-loops -std=c++11
 
 %.cc : %.4th pile.py
 	python2 pile.py $< > $@
