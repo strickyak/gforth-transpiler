@@ -31,4 +31,4 @@ m32:
 	make M=-m32 all
 
 clean:
-	rm -f a.out __m.tmp _m.cc _test.cc _colons.tmp _decls.h _defs.h _words.tmp
+	rm -f a.out __m.tmp _m.cc _test.cc
