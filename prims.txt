@@ -26,22 +26,22 @@ def utime
   word a, b;
   LongLongToPair(x, &b, &a);
   push(a); push(b);
-def cmove
+def cmove ( p q n - )
   word len = pop();
   char* to = (char*)pop();
   char* from = (char*)pop();
   for (word i=0; i<len; i++) to[i] = from[i];
   
-def true
+def true ( - z )
   push(-1);
-def false
+def false ( - z )
   push(0);
 un 0<>
   z = B(a != 0);
 un w@
   short* p= (short*)a;
   z = *p;
-def d-
+def d- ( a b c d - x y )
   word d = pop();
   word c = pop();
   word b = pop();
@@ -51,7 +51,7 @@ def d-
   LongLongToPair(z, &y, &x);
   push(x);
   push(y);
-def 2swap
+def 2swap ( a b c d - c d a b )
   word d = pop();
   word c = pop();
   word b = pop();
@@ -60,7 +60,7 @@ def 2swap
   push(d);
   push(a);
   push(b);
-def */
+def */ ( a b c - z )
   word c = pop();
   word b = pop();
   word a = pop();
@@ -70,7 +70,7 @@ def */
   
 def break:
   abort();
-def s>f
+def s>f ( a - | - x )
   word x = pop();
   fpush((double)x);
 un negate
@@ -87,7 +87,7 @@ def d0>
   assert(hi == 0 || hi == -1);
   push (lo > 0);
   
-def d.
+def d. ( lo hi - )
   word hi = pop();
   word lo = pop();
   assert(hi == 0 || hi == -1);
@@ -111,14 +111,14 @@ def bye
   exit(0);
 def quit
   exit(0);
-def 2drop
+def 2drop ( a b - )
   dp -= 2;
-def 2dup
+def 2dup ( a b - a b a b )
   word a = ds[dp-1];
   word b = ds[dp];
   push(a);
   push(b);
-def d>s
+def d>s ( lo hi - lo )
   word hi = pop();
   assert(hi == 0 || hi == -1);
   // Leave lo on stack.
@@ -340,39 +340,39 @@ def ~
     fflush(stderr);
     abort();
   }
-def .
+def . ( a - )
   printf("%ld ", ds[dp--]);
     fflush(stdout);
-def f.
+def f. ( - | f - )
   printf("%.15g ", fs[fp--]);
     fflush(stdout);
-def cr
+def cr ( - )
   printf("\n");
     fflush(stdout);
-def dup
+def dup ( a - a a )
   dp++;
   ds[dp] = ds[dp-1];
-def over
+def over ( a b - a b a )
   dp++;
   ds[dp] = ds[dp-2];
-def swap
+def swap ( a b - b a )
   word tmp = ds[dp];
   ds[dp] = ds[dp-1];
   ds[dp-1] = tmp;
-def rot
+def rot ( a b c - b c a )
   word tmp = ds[dp-2];
   ds[dp-2] = ds[dp-1];
   ds[dp-1] = ds[dp];
   ds[dp] = tmp;
-def -rot
+def -rot ( a b c - c a b )
   word tmp = ds[dp];
   ds[dp] = ds[dp-1];
   ds[dp-1] = ds[dp-2];
   ds[dp-2] = tmp;
-def !
+def ! ( x p - )
   word* p = (word*)ds[dp--];
   *p = ds[dp--];
-def @
+def @ ( p - x )
   word* p = (word*)ds[dp];
   ds[dp] = *p;
 def f!
@@ -386,7 +386,7 @@ def d>f
   word a = pop();
   long long x = PairToLongLong(b, a);
   fs[++fp] = (double)x;
-def drop
+def drop ( a - )
   --dp;
 def 2@
   word* a = (word*)ds[dp];

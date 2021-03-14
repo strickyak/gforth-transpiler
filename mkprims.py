@@ -21,98 +21,130 @@ def Esc(s):
             z += '_%d_' % ord(ch)
     return z
 
-Decls = open('_decls.h', 'w')
-Defs = open('_defs.h', 'w')
-Words = open('_words.tmp', 'w')
-Colons = open('_colons.tmp', 'w')
-fd = Defs
+def ParseSignature(vec):
+    if not vec:
+        return None, None, None, None
+    assert vec[0] == '('
+    assert vec[-1] == ')'
+    vec = vec[1:-1]   # Trim ( and )
+    win, wout, fin, fout = [], [], [], []
+    floating, outputting = False, False
+    for e in vec:
+        if e == '|':
+            floating = True
+            outputting = False
+        elif e == '-':
+            outputting = True
+        else:
+            if floating:
+                if outputting:
+                    fout.append(e)
+                else:
+                    fin.append(e)
+            else:
+                if outputting:
+                    wout.append(e)
+                else:
+                    win.append(e)
+    return win, wout, fin, fout
 
-ender = ''
-for line in sys.stdin:
-    line = line.rstrip()
-    cmd = line.split()[0] if line.split() else '**empty**'
-    if line.startswith('#'):
-        pass
-    elif cmd ==('def'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, 'inline void F_%s() { // %s' % (nom, name)
-        ender = '}'
-        fd = Defs
-    elif cmd ==('bin'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, '''inline void F_%s() { // %s'
-          word a = ds[dp-1];
-          word b = ds[dp];
-          word z = 0;
-          ''' % (nom, name)
-        ender = 'ds[--dp] = z; }'
-        fd = Defs
-    elif cmd ==('un'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, '''inline void F_%s() { // %s'
-          word a = ds[dp];
-          word z = 0;
-          ''' % (nom, name)
-        ender = 'ds[dp] = z; }'
-        fd = Defs
-    elif cmd ==('fun'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, '''inline void F_%s() { // %s'
-          double a = fs[fp];
-          double z = 0;
-          ''' % (nom, name)
-        ender = 'fs[fp] = z; }'
-        fd = Defs
-    elif cmd ==('fbin'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, '''inline void F_%s() { // %s'
-          double a = fs[fp-1];
-          double b = fs[fp];
-          double z = 0;
-          ''' % (nom, name)
-        ender = 'fs[--fp] = z; }'
-        fd = Defs
-    elif cmd ==('fbinw'):
-        name = line.split()[1]
-        print >>Words, name
-        nom = Esc(name)
-        print >>Decls, 'void F_%s(); // %s' % (nom, name)
-        print >>Defs, ender
-        print >>Defs, '''inline void F_%s() { // %s'
-          double b = fs[fp--];
-          double a = fs[fp--];
-          word z = 0;
-          ''' % (nom, name)
-        ender = 'ds[++dp] = z; }'
-        fd = Defs
-    elif cmd ==(':'):
-        print >>Colons, line
-        fd = Colons
-    else:
-        print >>fd, '        %s' % line
-print >>Defs, ender
+def main():
+    Decls = open('_decls.h', 'w')
+    Defs = open('_defs.h', 'w')
+    Words = open('_words.tmp', 'w')
+    Colons = open('_colons.tmp', 'w')
+    fd = Defs
 
-Decls.close()
-Defs.close()
-Words.close()
-Colons.close()
+    ender = ''
+    for line in sys.stdin:
+        line = line.rstrip()
+        cmd = line.split()[0] if line.split() else '**empty**'
+        if line.startswith('#'):
+            pass
+        elif cmd ==('def'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, 'inline void F_%s() { // %s' % (nom, name)
+            ender = '}'
+            fd = Defs
+            sig = ParseSignature(line.split()[2:])
+        elif cmd ==('bin'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              word a = ds[dp-1];
+              word b = ds[dp];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[--dp] = z; }'
+            fd = Defs
+        elif cmd ==('un'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              word a = ds[dp];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[dp] = z; }'
+            fd = Defs
+        elif cmd ==('fun'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double a = fs[fp];
+              double z = 0;
+              ''' % (nom, name)
+            ender = 'fs[fp] = z; }'
+            fd = Defs
+        elif cmd ==('fbin'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double a = fs[fp-1];
+              double b = fs[fp];
+              double z = 0;
+              ''' % (nom, name)
+            ender = 'fs[--fp] = z; }'
+            fd = Defs
+        elif cmd ==('fbinw'):
+            name = line.split()[1]
+            print >>Words, name
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double b = fs[fp--];
+              double a = fs[fp--];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[++dp] = z; }'
+            fd = Defs
+        elif cmd ==(':'):
+            print >>Colons, line
+            fd = Colons
+        else:
+            print >>fd, '        %s' % line
+    print >>Defs, ender
+
+    Decls.close()
+    Defs.close()
+    Words.close()
+    Colons.close()
+
+if __name__ == '__main__':
+    main()
