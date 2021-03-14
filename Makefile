@@ -3,7 +3,6 @@ M=
 CFLAGS= -funroll-loops -Ofast
 
 all:
-	python2 mkprims.py < prims.txt ; head -999 _defs.h _decls.h _words.tmp _colons.tmp
 	python2 pile.py test*.4th > _test.cc && cat -n _test.cc && g++ -std=c++11 $M ${CFLAGS} _test.cc && ./a.out
 	: ===========================
 	# If passes tests above, check in to RCS, if you have a "ci-l" command.

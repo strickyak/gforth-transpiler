@@ -1,13 +1,157 @@
 import re, sys
 
+DEFINED_WORDS = set()
+
+def Esc(s):
+    z = ''
+    for ch in s:
+        if '0' <= ch <= '9': z += ch
+        elif 'A' <= ch <= 'Z': z += ch
+        elif 'a' <= ch <= 'z': z += ch
+        else:
+            z += '_%d_' % ord(ch)
+    return z
+
+def ParseSignature(vec):
+    if not vec:
+        return None, None, None, None
+    assert vec[0] == '('
+    assert vec[-1] == ')'
+    vec = vec[1:-1]   # Trim ( and )
+    win, wout, fin, fout = [], [], [], []
+    floating, outputting = False, False
+    for e in vec:
+        if e == '|':
+            floating = True
+            outputting = False
+        elif e == '-':
+            outputting = True
+        else:
+            if floating:
+                if outputting:
+                    fout.append(e)
+                else:
+                    fin.append(e)
+            else:
+                if outputting:
+                    wout.append(e)
+                else:
+                    win.append(e)
+    return win, wout, fin, fout
+
+class InMemoryFile(object):
+    def __init__(self):
+        self.fragments = []
+
+    def write(self, s):
+        self.fragments.append(s)
+
+    def __str__(self):
+        return ''.join(self.fragments)
+
+    def close(self):
+        pass
+
+Decls = InMemoryFile()
+Defs = InMemoryFile()
+
+def CompilePrims():
+    fd = Defs
+
+    ender = ''
+    for line in open('prims.txt'):
+        line = line.rstrip()
+        cmd = line.split()[0] if line.split() else '**empty**'
+        if line.startswith('#'):
+            pass
+        elif cmd ==('def'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, 'inline void F_%s() { // %s' % (nom, name)
+            ender = '}'
+            fd = Defs
+            sig = ParseSignature(line.split()[2:])
+        elif cmd ==('bin'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              word a = ds[dp-1];
+              word b = ds[dp];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[--dp] = z; }'
+            fd = Defs
+        elif cmd ==('un'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              word a = ds[dp];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[dp] = z; }'
+            fd = Defs
+        elif cmd ==('fun'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double a = fs[fp];
+              double z = 0;
+              ''' % (nom, name)
+            ender = 'fs[fp] = z; }'
+            fd = Defs
+        elif cmd ==('fbin'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double a = fs[fp-1];
+              double b = fs[fp];
+              double z = 0;
+              ''' % (nom, name)
+            ender = 'fs[--fp] = z; }'
+            fd = Defs
+        elif cmd ==('fbinw'):
+            name = line.split()[1]
+            DEFINED_WORDS.add(name)
+            nom = Esc(name)
+            print >>Decls, 'void F_%s(); // %s' % (nom, name)
+            print >>Defs, ender
+            print >>Defs, '''inline void F_%s() { // %s'
+              double b = fs[fp--];
+              double a = fs[fp--];
+              word z = 0;
+              ''' % (nom, name)
+            ender = 'ds[++dp] = z; }'
+            fd = Defs
+        else:
+            print >>fd, '        %s' % line
+    print >>Defs, ender
+
+    Decls.close()
+    Defs.close()
+
+
+################################################
+
 WHITE = set([' ', '\t', '\n', '\r'])
 
-DEFINED_WORDS = set([w.rstrip() for w in open('_words.tmp')])
-
-IS_INT = re.compile('^([-]?(0x)?[0-9]+)$').match
-IS_HEX = re.compile('^([$][0-9a-fA-F]+)$').match
-IS_FLOAT = re.compile('^[-]?([0-9]+[.][0-9]*|[0-9]*[.][0-9]+)([eE][-]?[0-9]*)?$').match
-IS_CLEAN = re.compile('''^[^\\\\'"]*$''').match
+IS_INT = re.compile(r'^([-]?(0x)?[0-9]+)$').match
+IS_HEX = re.compile(r'^([$][0-9a-fA-F]+)$').match
+IS_FLOAT = re.compile(r'^[-]?([0-9]+[.][0-9]*|[0-9]*[.][0-9]+)([eE][-]?[0-9]+)?$').match
 
 SerialNum = 100
 def Serial():
@@ -96,7 +240,6 @@ class Parser(object):
         self.compiling = False
         self.decls = ''
         self.defs = ''
-        self.inits = ''
         self.main = ''
 
     def Parse(self, program):
@@ -280,34 +423,34 @@ int i=0, j=0;
         }
         ''' % (nom, name, body)
 
+CompilePrims()
 parser = Parser()
-parser.Parse(open('_colons.tmp').read())
 for filename in sys.argv[1:]:
     parser.Parse(open(filename).read())
 
 print '''
 #include "vm.h"
 // DECLARATIONS
+// parser.decls
 %s
-#include "_defs.h"
+// str(Decls)
+%s
 
 // DEFINITIONS
+// parser.defs
 %s
-#include "_decls.h"
-
-// INITIALIZATIONS
-void Initialize() {
+// str(Defs)
 %s
-}
 
 // MAIN
 int main(int argc, const char* argv[]) {
   VMInitialize();
-  Initialize();
   int i=0, j=0;
-%s
+
+  // parser.main
+  %s
 }
 // END
-''' % (parser.decls, parser.defs, parser.inits, parser.main)
+''' % (parser.decls, str(Decls), parser.defs, str(Defs), parser.main)
 
 pass

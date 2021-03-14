@@ -177,8 +177,8 @@ def place
   whither[0] = len;
   for (word i = 0; i < len; i++) whither[i+1] = whence[i];
 
-: decimal
-  ;  \ always in decimal, for now.
+def decimal
+  {}  // always in decimal, for now.
 def open-file
   pop(); // how
   word n = pop();
