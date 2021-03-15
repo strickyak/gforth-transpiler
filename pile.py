@@ -128,7 +128,6 @@ def f64_dot_product ( in_fp1 in_fp2 n -- | -- result )
   fpush(result);
 
 def utime
-  int gettimeofday(struct timeval *tv, struct timezone *tz);
   struct timeval tv;
   gettimeofday(&tv, nullptr);
   long long x = 1000000 * (long long)tv.tv_sec + (long long)tv.tv_usec;
