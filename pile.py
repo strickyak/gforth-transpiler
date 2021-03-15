@@ -358,6 +358,9 @@ def delete-file
   if (e) {
           perror("because");
           fprintf(stderr, "Could not delete `%s`\n", fname);
+          push(errno? errno: 255);
+  } else {
+          push(0);
   }
   free(fname);
 
