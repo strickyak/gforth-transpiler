@@ -368,20 +368,19 @@ def read-file
   FILE* file = (FILE*)pop();
   word len = pop();
   char* addr = (char*)pop();
-  size_t n = fread(addr, len, 1, file);
-  if (n==1) {
-    push(len);  // num bytes read
+  size_t n = fread(addr, 1, len, file);
+  push(n);  // num bytes read
+  if (n==len) {
     push(0);    // wior
   } else {
-    push(0);  // num bytes read
     push(errno? errno: 255); // wior
   }
 def write-file
   FILE* file = (FILE*)pop();
   word len = pop();
   char* addr = (char*)pop();
-  size_t n = fwrite(addr, len, 1, file);
-  if (n==1) {
+  size_t n = fwrite(addr, 1, len, file);
+  if (n==len) {
     push(0);
   } else {
     push(errno? errno: 255);
