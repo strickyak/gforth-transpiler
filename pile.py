@@ -354,7 +354,11 @@ def delete-file
   memcpy(fname, a, n);
 
   SAY(stderr, "=== delete-file: `%s`\n", fname);
-  SAY(stderr, "\nSHOULD DELETE FILE: %s\n", fname);
+  int e = unlink(fname);
+  if (e) {
+          perror("because");
+          fprintf(stderr, "Could not delete `%s`\n", fname);
+  }
   free(fname);
 
 def read-file
@@ -847,7 +851,7 @@ class Parser(object):
         if IS_INT(w):
             return '  push(%sL); // <<< %s >>>' % (w, w)
         elif IS_HEX(w):
-            return '  fpush(0x%s); // <<< %s >>>' % (w[1:], w)
+            return '  push(0x%s); // <<< %s >>>' % (w[1:], w)
         elif IS_FLOAT(w):
             return '  fpush(%s); // <<< %s >>>' % (w, w)
         elif w in DEFINED_WORDS:
