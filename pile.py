@@ -114,6 +114,19 @@ PRIM_DEFINITIONS = r'''
 #
 # See vm.h for more about stacks.
 #
+
+def f64_dot_product ( in_fp1 in_fp2 n -- | -- result )
+
+  word n = pop();
+  double* in_fp2 = (double*)pop();
+  double* in_fp1 = (double*)pop();
+
+  double result = 0.0;
+  for (word i = 0; i<n; i++) {
+    result += in_fp1[i] * in_fp2[i];
+  }
+  fpush(result);
+
 def utime
   int gettimeofday(struct timeval *tv, struct timezone *tz);
   struct timeval tv;
@@ -639,7 +652,7 @@ def CompilePrims(prim_defs):
         cmd = line.split()[0] if line.split() else '**empty**'
         if line.startswith('#'):
             pass
-        elif cmd ==('def'):
+        elif cmd == 'def':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -649,7 +662,7 @@ def CompilePrims(prim_defs):
             ender = '}'
             fd = Defs
             sig = ParseSignature(line.split()[2:])
-        elif cmd ==('bin'):
+        elif cmd == 'bin':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -662,7 +675,7 @@ def CompilePrims(prim_defs):
               ''' % (nom, name)
             ender = 'ds[--dp] = z; }'
             fd = Defs
-        elif cmd ==('un'):
+        elif cmd == 'un':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -674,7 +687,7 @@ def CompilePrims(prim_defs):
               ''' % (nom, name)
             ender = 'ds[dp] = z; }'
             fd = Defs
-        elif cmd ==('fun'):
+        elif cmd == 'fun':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -686,7 +699,7 @@ def CompilePrims(prim_defs):
               ''' % (nom, name)
             ender = 'fs[fp] = z; }'
             fd = Defs
-        elif cmd ==('fbin'):
+        elif cmd == 'fbin':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -699,7 +712,7 @@ def CompilePrims(prim_defs):
               ''' % (nom, name)
             ender = 'fs[--fp] = z; }'
             fd = Defs
-        elif cmd ==('fbinw'):
+        elif cmd == 'fbinw':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
@@ -938,18 +951,6 @@ class Parser(object):
 
         elif w == ":":
             return self.Colon()
-
-        elif w == "xxx do": return '''
-              rp += 2;
-              rs[rp] = ds[dp--];  // i
-              rs[rp-1] = ds[dp--];  // limit
-              while (rs[rp] < rs[rp-1]) {
-            '''
-        elif w == "xxx loop": return '''
-                rs[rp]++;
-              }
-              rp-=2;
-            '''
 
         elif w == "do": return '''
             {
