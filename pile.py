@@ -370,10 +370,10 @@ def read-file
   char* addr = (char*)pop();
   size_t n = fread(addr, 1, len, file);
   push(n);  // num bytes read
-  if (n==len) {
-    push(0);    // wior
+  if (n>0) {
+    push(0);    // wior GOOD
   } else {
-    push(errno? errno: 255); // wior
+    push(errno? errno: 255); // wior BAD
   }
 def write-file
   FILE* file = (FILE*)pop();
