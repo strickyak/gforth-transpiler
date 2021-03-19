@@ -29,6 +29,21 @@
 3 80 6 */ 40 = must ~
 300000 8000000 600000 */ 4000000 = must ~
 
+s" 12345678" 8 = must
+8 0 do dup i +     c@ . loop
+4 0 do dup i 2 * + w@ . loop
+dup w@ 12849 = if ." (Intel Order) " else ." (Not Intel Order) " then
+drop ~
+
+create foo 8 allot
+0 foo w! foo w@ 0 = must ~
+42 foo w! foo w@ 42 = must ~
+-42 foo w! foo w@ -42 = must ~
+-32768 foo w! foo w@ -32768 = must ~
+32767 foo w! foo w@ 32767 = must ~
+32769 foo w! foo w@ -32767 = must ~
+
+
 1 cells 4 = if
   42 0 d>f  fdup f.   42.         f= must ~
   0 1 d>f   fdup f.   4294967296. f= must ~

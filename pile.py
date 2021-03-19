@@ -146,9 +146,17 @@ def false ( - z )
   push(0);
 un 0<>
   z = BOOL(a != 0);
+
 un w@
   short* p= (short*)a;
-  z = *p;
+  // printf("\n((w@)),%04x,%04x\n", p[0], p[1]);
+  z = (word)*p;
+  // printf("\n((w@)) => %lx\n", (word)z);
+def w!
+  short* p= (short*)pop();
+  short x = (short)(0xFFFF & pop());
+  *p = x;
+
 def d- ( a b c d - x y )
   word d = pop();
   word c = pop();
@@ -1032,6 +1040,7 @@ print '''
 
 // MAIN
 int main(int argc, const char* argv[]) {
+  assert(sizeof(short) == 2);
   VMInitialize();
   int i=0, j=0;
 
