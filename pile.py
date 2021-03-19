@@ -174,7 +174,9 @@ def */ ( a b c - z )
   word a = pop();
   long long x = (long long)a * (long long)b;
   x = x / (long long)c;
-  push((word)c);
+  word z = (word)x;
+  assert(x == z);
+  push(z);
 
 def break:
   abort();

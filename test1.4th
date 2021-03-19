@@ -26,6 +26,9 @@
 -1234.5 fnegate 1234.5 f= must ~
 0. fnegate 0. f= must ~
 
+3 80 6 */ 40 = must ~
+300000 8000000 600000 */ 4000000 = must ~
+
 1 cells 4 = if
   42 0 d>f  fdup f.   42.         f= must ~
   0 1 d>f   fdup f.   4294967296. f= must ~
