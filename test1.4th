@@ -18,6 +18,14 @@
   0 s>f 0. f= must ~
   42 s>f 42. f= must ~
 
+12345 negate -12345 = must ~
+-12345 negate 12345 = must ~
+0 negate 0 = must ~
+
+1234.5 fnegate -1234.5 f= must ~
+-1234.5 fnegate 1234.5 f= must ~
+0. fnegate 0. f= must ~
+
 1 cells 4 = if
   42 0 d>f  fdup f.   42.         f= must ~
   0 1 d>f   fdup f.   4294967296. f= must ~
