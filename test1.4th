@@ -40,6 +40,7 @@ create foo 8 allot
 42 foo w! foo w@ 42 = must ~
 -42 foo w! foo w@ -42 = must ~
 -32768 foo w! foo w@ -32768 = must ~
+32768 foo w! foo w@ -32768 = must ~
 32767 foo w! foo w@ 32767 = must ~
 32769 foo w! foo w@ -32767 = must ~
 
