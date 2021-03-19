@@ -148,13 +148,17 @@ un 0<>
   z = BOOL(a != 0);
 
 un w@
-  short* p= (short*)a;
-  // printf("\n((w@)),%04x,%04x\n", p[0], p[1]);
+  unsigned short* p= (unsigned short*)a;
   z = (word)*p;
-  // printf("\n((w@)) => %lx\n", (word)z);
+un uw@
+  unsigned short* p= (unsigned short*)a;
+  z = (word)*p;
+un sw@
+  signed short* p= (signed short*)a;
+  z = (word)*p;
 def w!
-  short* p= (short*)pop();
-  short x = (short)(0xFFFF & pop());
+  unsigned short* p= (unsigned short*)pop();
+  unsigned short x = (unsigned short)(0xFFFF & pop());
   *p = x;
 
 def d- ( a b c d - x y )

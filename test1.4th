@@ -36,13 +36,35 @@ dup w@ 12849 = if ." (Intel Order) " else ." (Not Intel Order) " then
 drop ~
 
 create foo 8 allot
-0 foo w! foo w@ 0 = must ~
-42 foo w! foo w@ 42 = must ~
--42 foo w! foo w@ -42 = must ~
--32768 foo w! foo w@ -32768 = must ~
-32768 foo w! foo w@ -32768 = must ~
-32767 foo w! foo w@ 32767 = must ~
-32769 foo w! foo w@ -32767 = must ~
+
+\ This is for signed "sw@".
+0 foo w! foo sw@ 0 = must ~
+42 foo w! foo sw@ 42 = must ~
+-42 foo w! foo sw@ -42 = must ~
+-32768 foo w! foo sw@ -32768 = must ~
+32768 foo w! foo sw@ -32768 = must ~
+32767 foo w! foo sw@ 32767 = must ~
+32769 foo w! foo sw@ -32767 = must ~
+
+\ This is for unsigned "uw@".
+0 foo w! foo uw@ 0 = must ~
+42 foo w! foo uw@ 42 = must ~
+-1 foo w! foo uw@ -1 65536 + = must ~
+-2 foo w! foo uw@ -2 65536 + = must ~
+-42 foo w! foo uw@ -42 65536 + = must ~
+32767 foo w! foo uw@ 32767 = must ~
+32768 foo w! foo uw@ 32768 = must ~
+32769 foo w! foo uw@ 32769 = must ~
+
+\ This is for unsigned "w@".
+0 foo w! foo uw@ 0 = must ~
+42 foo w! foo uw@ 42 = must ~
+-1 foo w! foo uw@ -1 65536 + = must ~
+-2 foo w! foo uw@ -2 65536 + = must ~
+-42 foo w! foo uw@ -42 65536 + = must ~
+32767 foo w! foo uw@ 32767 = must ~
+32768 foo w! foo uw@ 32768 = must ~
+32769 foo w! foo uw@ 32769 = must ~
 
 
 1 cells 4 = if
