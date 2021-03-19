@@ -15,6 +15,23 @@
   10. 200.0 f* 2000. f= must ~
   16. fdup f* 256. f= must ~
 
+  0 s>f 0. f= must ~
+  42 s>f 42. f= must ~
+
+1 cells 4 = if
+  42 0 d>f  fdup f.   42.         f= must ~
+  0 1 d>f   fdup f.   4294967296. f= must ~
+  42 1 d>f  fdup f.   4294967338. f= must ~
+  42 2 d>f  fdup f.   8589934634. f= must ~
+then
+
+1 cells 8 = if
+  42 0 d>f  fdup f.   42. f= must ~
+  0 1 d>f   fdup f.   0.  f= must ~
+  42 1 d>f  fdup f.   42. f= must ~
+  42 2 d>f  fdup f.   42. f= must ~
+then
+
 -4 3 mod 2 = must ~
 -3 3 mod 0 = must ~
 -2 3 mod 1 = must ~

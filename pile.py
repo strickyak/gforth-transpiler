@@ -181,6 +181,8 @@ def break:
 def s>f ( a - | - x )
   word x = pop();
   fpush((double)x);
+fun fnegate
+  z = -a;
 un negate
   z = -a;
 un abs
@@ -496,10 +498,10 @@ def f@
   double* p = (double*)pop();
   fpush(*p);
 def d>f
-  word b = pop();
-  word a = pop();
-  long long x = PairToLongLong(b, a);
-  fs[++fp] = (double)x;
+  word hi = pop();
+  word lo = pop();
+  long long x = PairToLongLong(hi, lo);
+  fpush((double)x);
 def drop ( a - )
   --dp;
 def 2@
