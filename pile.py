@@ -549,9 +549,11 @@ bin -
 bin *
   z = a * b;
 bin /
+  assert(b != 0);
   z = a / b;
 bin mod
-  z = a % b;
+  assert(b > 0);
+  z = ((a % b) + b) % b;
 def fdup
   fs[fp+1] = fs[fp];
   fp++;

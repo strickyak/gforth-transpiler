@@ -15,6 +15,19 @@
   10. 200.0 f* 2000. f= must ~
   16. fdup f* 256. f= must ~
 
+-4 3 mod 2 = must ~
+-3 3 mod 0 = must ~
+-2 3 mod 1 = must ~
+-1 3 mod 2 = must ~
+0 3 mod 0 = must ~
+1 3 mod 1 = must ~
+2 3 mod 2 = must ~
+3 3 mod 0 = must ~
+4 3 mod 1 = must ~
+5 3 mod 2 = must ~
+6 3 mod 0 = must ~
+7 3 mod 1 = must ~
+
 variable a
 variable b
 variable c
