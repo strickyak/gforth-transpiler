@@ -446,13 +446,13 @@ def ~
   }
   if (rp) {
     fflush(stdout);
-    SAY(stderr, "\ndp is %ld want 0\n", rp);
+    SAY(stderr, "\nrp is %ld want 0\n", rp);
     fflush(stderr);
     abort();
   }
   if (fp) {
     fflush(stdout);
-    SAY(stderr, "\ndp is %ld want 0\n", fp);
+    SAY(stderr, "\nfp is %ld want 0\n", fp);
     fflush(stderr);
     abort();
   }
