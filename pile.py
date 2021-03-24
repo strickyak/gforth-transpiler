@@ -189,7 +189,6 @@ def */ ( a b c - z )
   word z = (word)x;
   assert(x == z);
   push(z);
-
 def break:
   abort();
 def s>f ( a - | - x )
@@ -200,6 +199,8 @@ fun fnegate
 un negate
   z = -a;
 un abs
+  z = (a<0) ? -a : a;
+fun fabs     //   20210323
   z = (a<0) ? -a : a;
 bin min
   z = (a<b) ? a : b;
@@ -597,17 +598,17 @@ fbinw f>
   z = (a > b);
 fbinw f>=
   z = (a >= b);
-fun sin
+fun fsin
   z = sin(a);
-fun cos
+fun fcos
   z = cos(a);
-fun tan
+fun ftan
   z = tan(a);
-fun asin
+fun fasin
   z = asin(a);
-fun acos
+fun facos
   z = acos(a);
-fun atan
+fun fatan
   z = atan(a);
 '''
 
@@ -762,7 +763,8 @@ WHITE = set([' ', '\t', '\n', '\r'])
 
 IS_INT = re.compile(r'^([-]?(0x)?[0-9]+)$').match
 IS_HEX = re.compile(r'^([$][0-9a-fA-F]+)$').match
-IS_FLOAT = re.compile(r'^[-]?([0-9]+[.][0-9]*|[0-9]*[.][0-9]+)([eE][-]?[0-9]+)?$').match
+IS_FLOAT = re.compile(r'^[-]?([0-9]+[.][0-9]*|[0-9]*[.][0-9]+)([eE][-]?[0-9]+)$').match
+IS_DOUBLE_INT = re.compile(r'^[-]?([0-9]+[.][0-9]*|[0-9]*[.][0-9]+)$').match
 
 SerialNum = 100
 def Serial():
@@ -874,6 +876,12 @@ class Parser(object):
             return '  push(0x%s); // <<< %s >>>' % (w[1:], w)
         elif IS_FLOAT(w):
             return '  fpush(%s); // <<< %s >>>' % (w, w)
+        elif IS_DOUBLE_INT(w):
+            without_dot = w.replace('.', '')
+            return '''
+                push( (word)(%sLL) ); // low half of double-int <<< %s >>>
+                push( (word)(%sLL >> (8*sizeof(word))) ); // high half of double-int <<< %s >>>
+                        ''' % (without_dot, w, without_dot, w)
         elif w in DEFINED_WORDS:
             return '      F_%s(); // %s' % (nom, w)
         elif w == '\\': # `\` comments thru end of line

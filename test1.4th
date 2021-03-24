@@ -9,22 +9,39 @@
   : double  ( a b - sum )  dup +  ;
   444 double 888 = must
 
-  333. 555.0 f+ 888.0 f= must ~
-  333. 555.0 f- -222.0 f= must ~
-  555.0 333. f- 222.0 f= must ~
-  10. 200.0 f* 2000. f= must ~
-  16. fdup f* 256. f= must ~
+  333.e0 555.0e0 f+ 888.0e0 f= must ~
+  333.e0 555.0e0 f- -222.0e0 f= must ~
+  555.0e0 333.e0 f- 222.0e0 f= must ~
+  10.e0 200.0e0 f* 2000.e0 f= must ~
+  16.e0 fdup f* 256.e0 f= must ~
 
-  0 s>f 0. f= must ~
-  42 s>f 42. f= must ~
+  0 s>f 0.e0 f= must ~
+  42 s>f 42.e0 f= must ~
+
+\ double-int
+
+  123456.    0 = must 123456 = must ~
+  123.456    0 = must 123456 = must ~
+  .123456    0 = must 123456 = must ~
+
+  123456789123456789.
+  1 cells 4 = if
+      28744523 = must   -1395630315 = must
+  else
+      0 = must   123456789123456789 = must
+  then ~
+
+  123456789123456789. d>f
+    123456789123456789.0e0 f= must ~
+\
 
 12345 negate -12345 = must ~
 -12345 negate 12345 = must ~
 0 negate 0 = must ~
 
-1234.5 fnegate -1234.5 f= must ~
--1234.5 fnegate 1234.5 f= must ~
-0. fnegate 0. f= must ~
+1234.5e0 fnegate -1234.5e0 f= must ~
+-1234.5e0 fnegate 1234.5e0 f= must ~
+0.e0 fnegate 0.e0 f= must ~
 
 3 80 6 */ 40 = must ~
 300000 8000000 600000 */ 4000000 = must ~
@@ -68,17 +85,17 @@ create foo 8 allot
 
 
 1 cells 4 = if
-  42 0 d>f  fdup f.   42.         f= must ~
-  0 1 d>f   fdup f.   4294967296. f= must ~
-  42 1 d>f  fdup f.   4294967338. f= must ~
-  42 2 d>f  fdup f.   8589934634. f= must ~
+  42 0 d>f  fdup f.   42.e0         f= must ~
+  0 1 d>f   fdup f.   4294967296.e0 f= must ~
+  42 1 d>f  fdup f.   4294967338.e0 f= must ~
+  42 2 d>f  fdup f.   8589934634.e0 f= must ~
 then
 
 1 cells 8 = if
-  42 0 d>f  fdup f.   42. f= must ~
-  0 1 d>f   fdup f.   0.  f= must ~
-  42 1 d>f  fdup f.   42. f= must ~
-  42 2 d>f  fdup f.   42. f= must ~
+  42 0 d>f  fdup f.   42.e0 f= must ~
+  0 1 d>f   fdup f.   0.e0  f= must ~
+  42 1 d>f  fdup f.   42.e0 f= must ~
+  42 2 d>f  fdup f.   42.e0 f= must ~
 then
 
 -4 3 mod 2 = must ~
