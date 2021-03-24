@@ -20,6 +20,9 @@ benchmark: benchmarks/my-forth-matrix benchmarks/dot-product-c benchmarks/dot-pr
 	time benchmarks/dot-product-c
 	time benchmarks/dot-product-colon
 
+m32:
+	make 'CXXFLAGS=-Ofast -funroll-loops -std=c++11 -m32' LDFLAGS=-m32
+
 clean:
 	rm -f a.out ./benchmarks/my-forth-matrix ./test1
 
