@@ -1,6 +1,27 @@
 # Filter to make gforth code more verbose.
 #
 #  python2 prep.py < program.4th > modified.4th
+#
+# Serving Suggetion:
+#
+# Here's a script that preprocesses, runs, and postprocesses
+# with the original program in p.4th
+"""
+python2 prep.py < p.4th > q.4th && echo 0437Taps | gforth-fast q.4th | head -5000 > ,1
+python2 prep.py < p.4th > q.4th && echo 0437Taps | gforth-fast q.4th | head -5000 > ,2
+diff ,1 ,2 | wc
+
+python2 pile.py  q.4th > q.cc
+clang-format-3.9 q.cc > qq.cc
+g++ -std=c++11 -g -o q qq.cc -lm
+echo 0437Taps | ./q | head -5000 > ,3
+diff ,1 ,3 | wc
+
+python post.py < ,1 > ,11
+python post.py < ,2 > ,22
+python post.py < ,3 > ,33
+diff ,11 ,33 | wc
+"""
 
 import re, sys
 
