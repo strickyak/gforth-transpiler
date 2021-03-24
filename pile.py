@@ -520,8 +520,8 @@ def drop ( a - )
   --dp;
 def 2@
   word* a = (word*)ds[dp];
-  ds[dp] = a[0];
-  ds[++dp] = a[1];
+  ds[dp] = a[1];
+  ds[++dp] = a[0];
 un cells
   z = sizeof(word) * a;
 un 0=
