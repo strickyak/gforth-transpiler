@@ -243,6 +243,25 @@ def 2dup ( a b - a b a b )
   word b = ds[dp];
   push(a);
   push(b);
+def f2dup ( a b - a b a b )
+  double a = fs[fp-1];
+  double b = fs[fp];
+  fpush(a);
+  fpush(b);
+def 3dup ( a b - a b a b )
+  word a = ds[dp-2];
+  word b = ds[dp-1];
+  word c = ds[dp];
+  push(a);
+  push(b);
+  push(c);
+def f3dup ( a b - a b a b )
+  double a = fs[fp-2];
+  double b = fs[fp-1];
+  double c = fs[fp];
+  fpush(a);
+  fpush(b);
+  fpush(c);
 def d>s ( lo hi - lo )
   word hi = pop();
   assert(hi == 0 || hi == -1);
@@ -483,6 +502,7 @@ def cr ( - )
 def dup ( a - a a )
   dp++;
   ds[dp] = ds[dp-1];
+
 def over ( a b - a b a )
   dp++;
   ds[dp] = ds[dp-2];
@@ -500,6 +520,25 @@ def -rot ( a b c - c a b )
   ds[dp] = ds[dp-1];
   ds[dp-1] = ds[dp-2];
   ds[dp-2] = tmp;
+
+def fover ( a b - a b a )
+  fp++;
+  fs[fp] = fs[fp-2];
+def fswap ( a b - b a )
+  double tmp = fs[fp];
+  fs[fp] = fs[fp-1];
+  fs[fp-1] = tmp;
+def frot ( a b c - b c a )
+  double tmp = fs[fp-2];
+  fs[fp-2] = fs[fp-1];
+  fs[fp-1] = fs[fp];
+  fs[fp] = tmp;
+def f-rot ( a b c - c a b )
+  double tmp = fs[fp];
+  fs[fp] = fs[fp-1];
+  fs[fp-1] = fs[fp-2];
+  fs[fp-2] = tmp;
+
 def ! ( x p - )
   word* p = (word*)ds[dp--];
   *p = ds[dp--];

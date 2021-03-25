@@ -1,5 +1,18 @@
 \ test1.4th
 
+: must-be-near
+  f3dup f+ f<= must
+        f- f>= must
+  ;
+
+0.0e0 fsin fdup f.   0.0e0                   f= must ~
+1.0e0 fsin fdup f.   0.841470984807897e0     1.0e-15 must-be-near ~
+3.14e0 fsin fdup f.  0.00159265291648683e0   1.0e-15 must-be-near ~
+
+0.0e0 fcos fdup f.    1.0e0                  f= must ~
+1.0e0 fcos fdup f.    0.54030230586814e0     1.0e-15 must-be-near ~
+3.14e0 fcos fdup f.  -0.999998731727539e0    1.0e-15 must-be-near ~
+
   100 2 + 102 = must ~
   100 2 - 98 = must ~
   2 100 - -98 = must ~
