@@ -13,6 +13,17 @@
 1.0e0 fcos fdup f.    0.54030230586814e0     1.0e-15 must-be-near ~
 3.14e0 fcos fdup f.  -0.999998731727539e0    1.0e-15 must-be-near ~
 
+
+cr
+." ((( "
+    : fpi 3.14159265358979e0 ;
+    : fsqrt2 1.414213562373095e0 ;
+    ." pi=" fpi f.
+    ." sin(pi/4)=" fpi 4.0e0 f/ fsin fdup f.  fdup f+  fsqrt2 1.0e-15 must-be-near ~
+." ))) "
+cr
+
+
   100 2 + 102 = must ~
   100 2 - 98 = must ~
   2 100 - -98 = must ~
