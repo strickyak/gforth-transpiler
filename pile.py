@@ -209,14 +209,14 @@ bin max
 def d0>
   word hi = pop();
   word lo = pop();
-  assert(hi == 0 || hi == -1);
-  push (lo > 0);
+  long long x = PairToLongLong(hi, lo);
+  push (x > 0);
 
 def d. ( lo hi - )
   word hi = pop();
   word lo = pop();
-  assert(hi == 0 || hi == -1);
-  printf("%ld ", lo);
+  long long x = PairToLongLong(hi, lo);
+  printf("%lld ", x);
     fflush(stdout);
 def throw
   word x = pop();
@@ -264,15 +264,15 @@ def f3dup ( a b - a b a b )
   fpush(c);
 def d>s ( lo hi - lo )
   word hi = pop();
-  assert(hi == 0 || hi == -1);
-  // Leave lo on stack.
+  word lo = pop();
+  long long x = PairToLongLong(hi, lo);
+  push((word)x);
 def s>d
-  word x = ds[dp];
-  if (x<0) {
-    push(-1);
-  } else {
-    push(0);
-  }
+  word x = pop();
+  word hi, lo;
+  LongLongToPair((long long)x, &hi, &lo);
+  push(lo);
+  push(hi);
 
 def s>unumber?
   word len = pop();
@@ -556,6 +556,13 @@ def d>f
   word lo = pop();
   long long x = PairToLongLong(hi, lo);
   fpush((double)x);
+def f>d
+  double a = fpop();
+  long long b = (long long)a;
+  word hi, lo;
+  LongLongToPair(b, &hi, &lo);
+  push(lo);
+  push(hi);
 def drop ( a - )
   --dp;
 def 2@
