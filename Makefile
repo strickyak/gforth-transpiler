@@ -24,7 +24,7 @@ m32:
 	make 'CXXFLAGS=-Ofast -funroll-loops -std=c++11 -m32' LDFLAGS=-m32
 
 debug:
-	make 'CXXFLAGS=-Ofast -funroll-loops -std=c++11 -DDEBUG'
+	make 'CXXFLAGS=-g -std=c++11 -DDEBUG'
 
 clean:
 	rm -f a.out ./benchmarks/my-forth-matrix ./test1
