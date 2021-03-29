@@ -115,6 +115,18 @@ PRIM_DEFINITIONS = r'''
 # See vm.h for more about stacks.
 #
 
+def fconvolve ( post_incr_ptr pre_decr_ptr n -- | -- result )
+
+  word n = pop();               // number of terms (i.e. #taps-1)
+  double* p2 = (double*)pop();  // pre-decrementing pointer
+  double* p1 = (double*)pop();  // post-incrementing pointer
+
+  double result = 0.0;
+  for (word i = 0; i<n; i++) {
+    result += *(p1++) * *(--p2);
+  }
+  fpush(result);
+
 def f64_dot_product ( in_fp1 in_fp2 n -- | -- result )
 
   word n = pop();

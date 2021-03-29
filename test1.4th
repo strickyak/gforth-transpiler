@@ -5,6 +5,31 @@
         f- f>= must
   ;
 
+: fcells   8 * ;
+
+\ Using fconvolve ( post_incr_ptr pre_decr_ptr n -- | -- result ):
+\ Compute (111*9 + 222*8 + 333*7) => 5106, with fconvolve.
+\ fconvolve takes two pointers to 8-byte floating point arrays
+\ and the number of terms to add.
+\ The first pointer is post-incremented for each term.
+\ The second pointer is pre-decremented for each term.
+\ The floating point result is left on the floating stack.
+create forward  3 fcells allot
+create backward  3 fcells allot
+
+forward
+  dup 111.0e0 f!      1 fcells +
+  dup 222.0e0 f!      1 fcells +
+  dup 333.0e0 f!      drop
+
+backward
+  dup 7.0e0 f!      1 fcells +
+  dup 8.0e0 f!      1 fcells +
+  dup 9.0e0 f!      1 fcells +   \ keep end-of-backward on stack
+
+forward swap 3 fconvolve      5106.0e0 f= must ~
+
+
 0.0e0 fsin fdup f.   0.0e0                   f= must ~
 1.0e0 fsin fdup f.   0.841470984807897e0     1.0e-15 must-be-near ~
 3.14e0 fsin fdup f.  0.00159265291648683e0   1.0e-15 must-be-near ~
