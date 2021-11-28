@@ -213,7 +213,7 @@ That's a 6.9x speedup to gforth, and a 3.3x speedup to gforth-fast.
 $ go run go/src/github.com/strickyak/livy-apl/livy.go
       42.759 div 6.209
 6.886616202287003
-      20.567 / 6.209
+      20.567 div 6.209
 3.312449669834112
       *EOF*
 
