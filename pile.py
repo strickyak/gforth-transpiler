@@ -1041,6 +1041,10 @@ class Parser(object):
         elif w == ":":
             return self.Colon()
 
+        elif w == "begin": return "{ while (1) {"
+        elif w == "while": return "{ if (!pop()) break; }"
+        elif w == "repeat": return "} }"
+
         elif w == "do": return '''
             {
               int j = i;

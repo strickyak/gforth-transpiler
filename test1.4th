@@ -175,6 +175,24 @@ variable c
 30 a ! 2 b !  a @ b @ + c !  c @ 32 = must
               a @ b @ * c !  c @ 60 = must ~
 
+
+\ Test of BEGIN, WHILE, REPEAT.
+\ Check 5050 == 1 + 2 + 3 + ... + 100
+0 a !   0 b !   0 c !
+begin
+  \ LET c = a + c
+  a @ c @ + c !
+
+  \ WHILE (a < 100)
+  a @ 100 < while
+
+  \ LET a = a + 1
+  a @ 1+ a !
+repeat
+  a @ 100 = must ~
+  c @ 5050 = must ~
+
+
 404 value not_found
 1 not_found 2 ( ) 2 = must 404 = must 1 = must ~
 400 to not_found
