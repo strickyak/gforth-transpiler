@@ -750,7 +750,7 @@ def CompilePrims(prim_defs):
             nom = Esc(name)
             print >>Decls, 'void F_%s(); // %s' % (nom, name)
             print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s'
+            print >>Defs, '''inline void F_%s() { // %s
               word a = ds[dp-1];
               word b = ds[dp];
               word z = 0;
@@ -763,7 +763,7 @@ def CompilePrims(prim_defs):
             nom = Esc(name)
             print >>Decls, 'void F_%s(); // %s' % (nom, name)
             print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s'
+            print >>Defs, '''inline void F_%s() { // %s
               word a = ds[dp];
               word z = 0;
               ''' % (nom, name)
@@ -775,7 +775,7 @@ def CompilePrims(prim_defs):
             nom = Esc(name)
             print >>Decls, 'void F_%s(); // %s' % (nom, name)
             print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s'
+            print >>Defs, '''inline void F_%s() { // %s
               double a = fs[fp];
               double z = 0;
               ''' % (nom, name)
@@ -787,7 +787,7 @@ def CompilePrims(prim_defs):
             nom = Esc(name)
             print >>Decls, 'void F_%s(); // %s' % (nom, name)
             print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s'
+            print >>Defs, '''inline void F_%s() { // %s
               double a = fs[fp-1];
               double b = fs[fp];
               double z = 0;
@@ -800,7 +800,7 @@ def CompilePrims(prim_defs):
             nom = Esc(name)
             print >>Decls, 'void F_%s(); // %s' % (nom, name)
             print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s'
+            print >>Defs, '''inline void F_%s() { // %s
               double b = fs[fp--];
               double a = fs[fp--];
               word z = 0;
@@ -1085,12 +1085,13 @@ class Parser(object):
             body += '''\nShowStacks();\n'''
             w = self.lexer.mustGetWord()
 
-        self.decls += '''void F_%s(); // %s''' % (nom, name)
+        self.decls += '''void F_%s(); // %s
+''' % (nom, name)
         self.defs += '''inline void F_%s() { // %s
 int i=0, j=0;
 %s
         }
-        ''' % (nom, name, body)
+''' % (nom, name, body)
 
 CompilePrims(PRIM_DEFINITIONS)
 parser = Parser()
