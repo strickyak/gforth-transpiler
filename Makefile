@@ -6,9 +6,10 @@
 
 CXXFLAGS=-Ofast -funroll-loops -std=c++11
 LDLIBS= -lm
+PILE = parpile
 
-%.cc : %.4th pile.py
-	python2 pile.py $< > $@
+%.cc : %.4th $(PILE).py
+	python2 $(PILE).py $< > $@
 
 all: test benchmark clean
 
