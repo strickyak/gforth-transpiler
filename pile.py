@@ -869,7 +869,10 @@ class Lexer(object):
             return ''
 
     def rewindChar(self):
-        if self.i: self.i -= 1
+        assert self.i
+        self.i -= 1
+        if self.program[self.i] == '\n':
+            self.lineNo -= 1
 
     def mustGetWord(self):
         w = self.getWord().lower()
