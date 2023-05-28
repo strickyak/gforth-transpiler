@@ -13,8 +13,11 @@ PILE = parpile
 
 all: test benchmark clean
 
-test: test1
+test: test1 whitespace-regress-test
 	./test1
+
+whitespace-regress-test: whitespace-regress-test.4th
+	python2 pile.py $< >/dev/null
 
 benchmark: benchmarks/my-forth-matrix benchmarks/dot-product-c benchmarks/dot-product-colon
 	time benchmarks/my-forth-matrix
@@ -30,4 +33,4 @@ debug:
 clean:
 	rm -f a.out ./benchmarks/my-forth-matrix ./test1
 
-.PHONY: all test benchmark clean
+.PHONY: all test benchmark clean whitespace-regress-test
