@@ -63,12 +63,12 @@ long long PairToLongLong(word hi, word lo) {
 }
 
 void VMInitialize() {
-  SAY(stderr, "sizeof (int) = %d\n", sizeof(int));
-  SAY(stderr, "sizeof (word) = %d\n", sizeof(word));
-  SAY(stderr, "sizeof (uword) = %d\n", sizeof(uword));
-  SAY(stderr, "sizeof (long) = %d\n", sizeof(long));
-  SAY(stderr, "sizeof (char*) = %d\n", sizeof(char*));
-  SAY(stderr, "sizeof (word*) = %d\n", sizeof(word*));
+  SAY(stderr, "sizeof (int) = %lu\n", (unsigned long) sizeof(int));
+  SAY(stderr, "sizeof (word) = %lu\n", (unsigned long) sizeof(word));
+  SAY(stderr, "sizeof (uword) = %lu\n", (unsigned long) sizeof(uword));
+  SAY(stderr, "sizeof (long) = %lu\n", (unsigned long) sizeof(long));
+  SAY(stderr, "sizeof (char*) = %lu\n", (unsigned long) sizeof(char*));
+  SAY(stderr, "sizeof (word*) = %lu\n", (unsigned long) sizeof(word*));
 
   here = (word)(&heap[0]);
   SAY(stderr, "=== here = %ld\n", here);
@@ -206,6 +206,9 @@ def break:
 def s>f ( a - | - x )
   word x = pop();
   fpush((double)x);
+def f>s ( a - | - x )
+  double x = fpop();
+  push ((word)x);
 fun fnegate
   z = -a;
 un negate
@@ -218,11 +221,24 @@ bin min
   z = (a<b) ? a : b;
 bin max
   z = (a<b) ? b : a;
+def d0<
+  word hi = pop();
+  word lo = pop();
+  long long x = PairToLongLong(hi, lo);
+  push (x < 0);
 def d0>
   word hi = pop();
   word lo = pop();
   long long x = PairToLongLong(hi, lo);
   push (x > 0);
+def dnegate
+  word hi = pop();
+  word lo = pop();
+  long long x = PairToLongLong(hi, lo);
+  x = (-x);
+  LongLongToPair((long long)x, &hi, &lo);
+  push(lo);
+  push(hi);
 
 def d. ( lo hi - )
   word hi = pop();
@@ -237,7 +253,9 @@ def type
   word len = pop();
   char* addr = (char*)pop();
   for (int i = 0; i < len; i++) putchar(addr[i]);
-
+def emit
+  word x = pop(); // ajk 20220731
+  putchar(x);
 def count
   char* addr = (char*)pop();
   word len = 255 & (word)(*addr);
@@ -629,6 +647,8 @@ bin /
 bin mod
   assert(b > 0);
   z = ((a % b) + b) % b;
+def fdrop
+  fp--;   // kr6dd 20210815
 def fdup
   fs[fp+1] = fs[fp];
   fp++;
@@ -668,6 +688,12 @@ fun facos
   z = acos(a);
 fun fatan
   z = atan(a);
+fun flog
+  z = log(a);
+fun fexp
+  z = exp(a);
+fbin fatan2
+  z = atan2(a, b);
 '''
 
 DEFINED_WORDS = set()
@@ -738,9 +764,9 @@ def CompilePrims(prim_defs):
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, 'inline void F_%s() { // %s' % (nom, name)
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( 'inline void F_%s() { // %s' % (nom, name), file=Defs)
             ender = '}'
             fd = Defs
             sig = ParseSignature(line.split()[2:])
@@ -748,68 +774,68 @@ def CompilePrims(prim_defs):
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( '''inline void F_%s() { // %s
               word a = ds[dp-1];
               word b = ds[dp];
               word z = 0;
-              ''' % (nom, name)
+              ''' % (nom, name), file=Defs)
             ender = 'ds[--dp] = z; }'
             fd = Defs
         elif cmd == 'un':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( '''inline void F_%s() { // %s
               word a = ds[dp];
               word z = 0;
-              ''' % (nom, name)
+              ''' % (nom, name), file=Defs)
             ender = 'ds[dp] = z; }'
             fd = Defs
         elif cmd == 'fun':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( '''inline void F_%s() { // %s
               double a = fs[fp];
               double z = 0;
-              ''' % (nom, name)
+              ''' % (nom, name), file=Defs)
             ender = 'fs[fp] = z; }'
             fd = Defs
         elif cmd == 'fbin':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( '''inline void F_%s() { // %s
               double a = fs[fp-1];
               double b = fs[fp];
               double z = 0;
-              ''' % (nom, name)
+              ''' % (nom, name), file=Defs)
             ender = 'fs[--fp] = z; }'
             fd = Defs
         elif cmd == 'fbinw':
             name = line.split()[1]
             DEFINED_WORDS.add(name)
             nom = Esc(name)
-            print >>Decls, 'void F_%s(); // %s' % (nom, name)
-            print >>Defs, ender
-            print >>Defs, '''inline void F_%s() { // %s
+            print( 'void F_%s(); // %s' % (nom, name), file=Decls)
+            print( ender, file=Defs)
+            print( '''inline void F_%s() { // %s
               double b = fs[fp--];
               double a = fs[fp--];
               word z = 0;
-              ''' % (nom, name)
+              ''' % (nom, name), file=Defs)
             ender = 'ds[++dp] = z; }'
             fd = Defs
         else:
-            print >>fd, '        %s' % line
-    print >>Defs, ender
+            print( '        %s' % line, file=fd)
+    print( ender, file=Defs)
 
     Decls.close()
     Defs.close()
@@ -953,8 +979,8 @@ class Parser(object):
         elif w == 's"': # `s"` gets string thru `"`
             s = self.lexer.getString(termination='"')
             k = Serial()
-            # self.decls += 'const char S_%d[]; // %s\n' % (k, s)
-            self.defs += 'const char S_%d[] = "%s"; // `%s`\n' % (k, CEscape(s), s)
+            n = len(s)+1  # +1 for the final \0.
+            self.defs += 'const char S_%d[%d] = "%s"; // `%s`\n' % (k, n, CEscape(s), s)
 
             return 'push((word) &S_%d[0]); push(strlen(S_%d)); // `%s`' % (k, k, s)
 
@@ -1042,7 +1068,9 @@ class Parser(object):
             return self.Colon()
 
         elif w == "begin": return "{ while (1) {"
+
         elif w == "while": return "{ if (!pop()) break; }"
+
         elif w == "repeat": return "} }"
 
         elif w == "do": return '''
@@ -1068,6 +1096,25 @@ class Parser(object):
         elif w == "then": return '''
                 }}
             '''
+
+        elif w == "case": return '''
+                { // case
+                word _case_ = pop();
+                '''
+
+        elif w == "of": return '''
+                { // of
+                if (_case_ == pop()) {
+                '''
+
+        elif w == "endof": return '''
+                                }
+                }  // endof
+                '''
+
+        elif w == "endcase": return '''
+                }  // endcase
+                '''
 
         else:
             raise Exception('Unknown action: %s' % w)
@@ -1098,7 +1145,7 @@ parser = Parser()
 for filename in sys.argv[1:]:
     parser.Parse(open(filename).read())
 
-print '''
+print( '''
 // VM_HEADER
 %s
 // DECLARATIONS
@@ -1123,6 +1170,6 @@ int main(int argc, const char* argv[]) {
   %s
 }
 // END
-''' % (VM_HEADER, parser.decls, str(Decls), parser.defs, str(Defs), parser.main)
+''' % (VM_HEADER, parser.decls, str(Decls), parser.defs, str(Defs), parser.main))
 
 pass

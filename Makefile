@@ -9,7 +9,7 @@ LDLIBS= -lm
 PILE = parpile
 
 %.cc : %.4th $(PILE).py
-	python2 $(PILE).py $< > $@
+	python3 $(PILE).py $< > $@
 
 all: test benchmark clean
 

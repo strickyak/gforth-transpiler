@@ -86,8 +86,8 @@ def TweakAll(s):
 
 for line in sys.stdin:
     if F_REMARK(line):
-        print line.strip() + ' \\  REMARK'
+        print( line.strip() + ' \\  REMARK' )
     else:
-        print '\\ <<<<<'
-        print TweakAll(line.rstrip())
-        print '\\ >>>>>'
+        print( '\\ <<<<<' )
+        print( TweakAll(line.rstrip()) )
+        print( '\\ >>>>>' )

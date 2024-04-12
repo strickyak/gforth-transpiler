@@ -21,4 +21,4 @@ for line in sys.stdin:
         	done += front + ('%.15g' % float(m.group(1)))
 		rest = back
 		# print 'TRANFORM', m.group(1), ('%.15g' % float(m.group(1)))
-	print done
+	print( done )

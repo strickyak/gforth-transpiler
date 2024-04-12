@@ -1,0 +1,10 @@
+pi@raspberrypi:~/gforth-transpiler $ python2 pile.py TaskAapr10live.4th
+Traceback (most recent call last):
+  File "pile.py", line 1114, in <module>
+    CompilePrims(PRIM_DEFINITIONS)
+  File "pile.py", line 763, in CompilePrims
+    sig = ParseSignature(line.split()[2:])
+  File "pile.py", line 705, in ParseSignature
+    assert vec[0] == '('
+AssertionError
+pi@raspberrypi:~/gforth-transpiler $ 
