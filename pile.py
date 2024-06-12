@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import re, sys
 
 VM_HEADER = r'''
@@ -332,7 +334,6 @@ def accept
   int n = strlen(buffer);
   if (buffer[n-1] == '\n') buffer[n-1] = '\0';
   push(strlen(buffer));
-
 def +place
   char* whither = (char*) pop();
   word len = pop();
@@ -881,14 +882,23 @@ class Lexer(object):
         self.program = program
         self.i = 0
         self.n = len(self.program)
+        self.lineNo = 1
 
     def getChar(self):
         if self.i < self.n:
             ch = self.program[self.i]
+            if (ch == '\n'):
+                self.lineNo += 1
             self.i += 1
             return ch
         else:
             return ''
+
+    def rewindChar(self):
+        assert self.i
+        self.i -= 1
+        if self.program[self.i] == '\n':
+            self.lineNo -= 1
 
     def mustGetWord(self):
         w = self.getWord().lower()
@@ -902,34 +912,33 @@ class Lexer(object):
 
     def getWord(self):
         # Skip white space.
-        while self.i < self.n:
-            ch = self.program[self.i]
+        while True:
+            ch = self.getChar()
+            if not ch: return ''
             if ch not in WHITE: break
-            self.i += 1
 
-        # Check for EOF.
-        if self.i >= self.n: return ''
-
-        # Find non-white span.
-        self.start = self.i
-        while self.i < self.n:
-            ch = self.program[self.i]
-            if ch in WHITE: break
-            self.i += 1
-        self.limit = self.i
-
-        # Consume the terminating white char.
-        if self.i < self.n: self.i += 1
-
-        return self.program[self.start:self.limit]
+        word = str(ch)
+        while True:
+            ch = self.getChar()
+            if not ch: break
+            if ch in WHITE:
+                self.rewindChar()
+                break
+            word += ch
+        return word
 
     def getString(self, termination):
         s = ''
-        ch = 'START'
-        while ch and ch != termination:
+        while True:
             ch = self.getChar()
-            if ch != termination: s += ch
+            if not ch: break
+            if ch == termination: break
+            s += ch
         return s
+
+    def getLineNo(self):
+        return self.lineNo
+
 
 class Parser(object):
     def __init__(self):
@@ -1117,7 +1126,7 @@ class Parser(object):
                 '''
 
         else:
-            raise Exception('Unknown action: %s' % w)
+            raise Exception('Unknown action: %s at line %d' % (w, self.lexer.getLineNo()))
 
     def Colon(self):
         name, nom = self.lexer.getWordToDefine()
